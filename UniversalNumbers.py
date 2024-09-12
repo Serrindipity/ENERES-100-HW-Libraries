@@ -9,7 +9,7 @@ import unum.units as u
 import re
 
 
-"TODO: make all token conversions in one place"
+verbose = False
 def _parse_input_type(input: float|int|str) -> Unum|Decimal:
         getcontext().prec=7
         
@@ -48,19 +48,22 @@ def _parse_input_type(input: float|int|str) -> Unum|Decimal:
         
         in_str = input.strip()
         tokens = tokenize(in_str, None)
-        print(tokens)
+        if verbose:
+            print(tokens)
         converted_tokens = []
         for i in tokens:
             if i in conversions.keys():
                 converted_tokens.append(conversions[i])
             else:
                 try:
-                    print(i)
+                    if verbose:
+                        print(i)
                     converted_tokens.append(Decimal(i))
                 except (InvalidOperation, TypeError):
                     converted_tokens.append(i)
                     # print("Decimal coercion failed")
-        print(f"converted tokens = {converted_tokens}")
+        if verbose:
+            print(f"converted tokens = {converted_tokens}")
         final_tokens = []
         # Add INSERT_OPERATOR between all tokens without operators between them
         for prev, current in zip(converted_tokens, converted_tokens[1:]):
@@ -70,8 +73,8 @@ def _parse_input_type(input: float|int|str) -> Unum|Decimal:
         final_tokens.append(converted_tokens[-1])
 
         input = ''.join(repr(i) if not isinstance(i, str) else i for i in final_tokens)
-
-        print(f"Post conversion output is {input}")
+        if verbose:
+            print(f"Post conversion output is {input}")
 
 
         # Allow only safe operations and scientific notation and Unum units
