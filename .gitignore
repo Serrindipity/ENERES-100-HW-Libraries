@@ -3,3 +3,12 @@ __pycache__/
 *.pyo
 .vscode/
 pyvenv.cfg
+.math-venv/
+.math-venv/*
+!/.math-venv/
+!/.math-venv/lib/
+!/.math-venv/lib/python3.12/
+!/.math-venv/lib/python3.12/site-packages/
+/.math-venv/lib/python3.12/site-packages/*
+!/.math-venv/lib/python3.12/site-packages/unum/
+!/.math-venv/lib/python3.12/site-packages/Unum-4.2.1.dist-info
