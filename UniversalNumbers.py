@@ -10,14 +10,17 @@ import re
 
 
 verbose = False
-def _parse_input_type(input: float|int|str) -> Unum|Decimal:
+"""
+Returns a Unum object from a variety of number representations. Parses data, then tokenizes, then runs eval() on tokens
+"""
+def _parse_input_type(input: float|int|str|Decimal|Unum) -> Unum:
         getcontext().prec=7
         
         if isinstance(input, (float, int)):
-            return Decimal(input)
+            return Unum(Decimal(input))
         
         if isinstance(input, (Decimal, Unum)):
-            return input
+            return Unum(input)
 
         # Parse comma-separated stuff
         if isinstance(input, str) and "," in input:
@@ -29,7 +32,7 @@ def _parse_input_type(input: float|int|str) -> Unum|Decimal:
                 dec = Decimal(input[:-1]) / 100
             except InvalidOperation:
                 raise ValueError(f"Invalid percentage format: {input}")
-            return dec
+            return Unum(dec)
         # Do conversions:
         
         conversions = {
@@ -93,7 +96,7 @@ def _parse_input_type(input: float|int|str) -> Unum|Decimal:
             evaluated_input = eval(input, allowed_globals, allowed_locals)
             
             # Convert the result to Decimal
-            return evaluated_input if isinstance(evaluated_input, Unum) else Decimal(evaluated_input)
+            return evaluated_input if isinstance(evaluated_input, Unum) else Unum(Decimal(evaluated_input))
         except (TypeError, InvalidOperation):
             raise ValueError(f"Invalid number format: {input}")
 
