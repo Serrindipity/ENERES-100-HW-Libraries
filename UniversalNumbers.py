@@ -17,10 +17,10 @@ def _parse_input_type(input: float|int|str|Decimal|Unum) -> Unum:
         getcontext().prec=7
         
         if isinstance(input, (float, int)):
-            return Unum(Decimal(input))
+            return Unum.coerceToUnum(Decimal(input))
         
         if isinstance(input, (Decimal, Unum)):
-            return Unum(input)
+            return Unum.coerceToUnum(input)
 
         # Parse comma-separated stuff
         if isinstance(input, str) and "," in input:
