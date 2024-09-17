@@ -13,7 +13,7 @@ command = /path/to/your/python@3.12/bin/python3.12 -m venv /path/to/this/directo
 Alternatively, (and probably a better way) is to make a new venv and copy the unit and init files from this repo to that venv. I'll get around to writing a build script for it eventually.
 
 TODO:
-- [] fork actual Unum repo to allow building from requirements.txt
+- [ ] fork actual Unum repo to allow building from requirements.txt
 
 
 Example Usage:
