@@ -32,7 +32,7 @@ def _parse_input_type(input: float|int|str|Decimal|Unum) -> Unum:
                 dec = Decimal(input[:-1]) / 100
             except InvalidOperation:
                 raise ValueError(f"Invalid percentage format: {input}")
-            return Unum(dec)
+            return Unum.coerceToUnum(dec)
         # Do conversions:
         
         conversions = {
@@ -96,7 +96,7 @@ def _parse_input_type(input: float|int|str|Decimal|Unum) -> Unum:
             evaluated_input = eval(input, allowed_globals, allowed_locals)
             
             # Convert the result to Decimal
-            return evaluated_input if isinstance(evaluated_input, Unum) else Unum(Decimal(evaluated_input))
+            return evaluated_input if isinstance(evaluated_input, Unum) else Unum.coerceToUnum(Decimal(evaluated_input))
         except (TypeError, InvalidOperation):
             raise ValueError(f"Invalid number format: {input}")
 
