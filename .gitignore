@@ -12,3 +12,4 @@ pyvenv.cfg
 /.math-venv/lib/python3.12/site-packages/*
 !/.math-venv/lib/python3.12/site-packages/unum/
 !/.math-venv/lib/python3.12/site-packages/Unum-4.2.1.dist-info
+testing.py
