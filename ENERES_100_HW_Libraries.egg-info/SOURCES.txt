@@ -1,0 +1,11 @@
+README.md
+pyproject.toml
+ENERES_100_HW_Libraries.egg-info/PKG-INFO
+ENERES_100_HW_Libraries.egg-info/SOURCES.txt
+ENERES_100_HW_Libraries.egg-info/dependency_links.txt
+ENERES_100_HW_Libraries.egg-info/requires.txt
+ENERES_100_HW_Libraries.egg-info/top_level.txt
+src/eneres_100_hw_libraries/UniversalNumbers.py
+src/eneres_100_hw_libraries/__init__.py
+src/eneres_100_hw_libraries/convert.py
+src/eneres_100_hw_libraries/testing.py
