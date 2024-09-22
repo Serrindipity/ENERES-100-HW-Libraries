@@ -3,7 +3,6 @@
 # Some stuff I'd like to represent: 160 billion, 7.05e9, 7.05*10^9, 7.5x10^9, 30%, 346,567,000
 
 from decimal import Decimal, InvalidOperation, getcontext
-import math
 from unum import Unum
 import unum.units as u
 import re
@@ -147,8 +146,7 @@ class UniversalNumber:
             "sci" : sci_repr
         }
 
-def convert(input) -> Decimal | Unum:
-    return _parse_input_type(input)
+
 
 def tokenize(expr: str, pattern: re.Pattern|None) -> list:
 
