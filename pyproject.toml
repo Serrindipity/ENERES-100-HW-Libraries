@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name="ENERES-100-HW-Libraries",
+version="0.1.0",
+description="Custom Unum Fork for ENERES 100",
+authors = [
+    {name = "Serrindipity", email = "jon_quitoriano@berkeley.edu"},
+]
+readme='README.md'
+url="https://github.com/Serrindipity/ENERES-100-HW-Libraries",
+dependencies=[
+    "eneres_100_unum @ git+https://github.com/Serrindipity/ENERES-100-Unum.git@main"
+]
+
+[tool.setuptools.packages]
+find = {}  # Scan the project directory with the default parameters
