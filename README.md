@@ -1,24 +1,17 @@
-Python Libraries for UC Berkeley's ENE,RES 100 class
+## Python Libraries for UC Berkeley's ENE,RES 100 class
 
-Make a new pyvenv.cfg file in .math-venv
-
+Install
+```bash
+git clone https://github.com/Serrindipity/ENERES-100-HW-Libraries.git
+cd eneres_100_hw_libraries
+python3 -m venv .venv # Make a virtual environment
+source .venv/bin/activate # Activate the venv
+pip3 install eneres_100_unum @ git+https://github.com/Serrindipity/ENERES-100-Unum.git@main # Install custom unum library
 ```
-home = /path/to/your/python@3.12/bin
-include-system-site-packages = false
-version = 3.12.3
-executable = /path/to/your/python@3.12/3.12.3/Frameworks/Python.framework/Versions/3.12/bin/python3.12
-command = /path/to/your/python@3.12/bin/python3.12 -m venv /path/to/this/directory/.math-venv
-```
-
-Alternatively, (and probably a better way) is to make a new venv and copy the unit and init files from this repo to that venv. I'll get around to writing a build script for it eventually.
-
-TODO:
-- [ ] fork actual Unum repo to allow building from requirements.txt
-
 
 Example Usage:
 ```python
-from UniversalNumbers import UniversalNumber, convert
+from convert import convert
 from unum.units import *
 
 efficiency = convert("0.3")
@@ -29,3 +22,6 @@ wood_per_year = global_consumption / wood_energy
 wood_per_year_eff_adjusted = wood_per_year * efficiency
 print(wood_per_year_eff_adjusted.asUnit(ton/year))
 ```
+TODO:
+- manage dependencies for upload to PyPi
+- pass tests for twine upload
