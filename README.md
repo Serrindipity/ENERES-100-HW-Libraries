@@ -6,7 +6,7 @@ git clone https://github.com/Serrindipity/ENERES-100-HW-Libraries.git
 cd eneres_100_hw_libraries
 python3 -m venv .venv # Make a virtual environment
 source .venv/bin/activate # Activate the venv
-pip3 install eneres_100_unum @ git+https://github.com/Serrindipity/ENERES-100-Unum.git@main # Install custom unum library
+pip3 install eneres_100_unum@git+https://github.com/Serrindipity/ENERES-100-Unum.git@main # Install custom unum library
 ```
 
 Example Usage:
