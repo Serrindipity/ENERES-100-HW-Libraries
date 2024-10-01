@@ -11,7 +11,8 @@ pip3 install eneres_100_unum@git+https://github.com/Serrindipity/ENERES-100-Unum
 
 Example Usage:
 ```python
-from convert import convert
+# Assuming this is run from the main project directory (i.e. where the README is)
+from src.eneres_100_hw_libraries.convert import convert
 from unum.units import *
 
 efficiency = convert("0.3")
