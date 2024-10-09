@@ -3,9 +3,9 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name="ENERES-100-HW-Libraries"
+name="eneres_100_hw_libraries"
 version="0.1.0"
-description="Custom Unum Fork for ENERES 100"
+description="Python library with tools for UC Berkeley's ENE,RES 100"
 authors = [
     {name = "Serrindipity", email = "jon_quitoriano@berkeley.edu"},
 ]
