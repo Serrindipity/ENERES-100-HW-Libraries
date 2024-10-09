@@ -14,3 +14,4 @@ pyvenv.cfg
 # !/.math-venv/lib/python3.12/site-packages/Unum-4.2.1.dist-info
 testing.py
 .DS_Store
+requirements.txt
