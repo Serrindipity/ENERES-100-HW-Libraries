@@ -1,2 +1,3 @@
 dist
-src
+eneres_100_hw_libraries
+tests
