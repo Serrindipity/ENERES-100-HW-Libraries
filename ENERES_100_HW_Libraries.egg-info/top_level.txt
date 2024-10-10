@@ -1,3 +1,2 @@
 dist
 eneres_100_hw_libraries
-tests

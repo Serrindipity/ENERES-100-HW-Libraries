@@ -7,20 +7,18 @@ Description-Content-Type: text/markdown
 Requires-Dist: eneres_100_unum@ git+https://github.com/Serrindipity/ENERES-100-Unum.git@main
 
 ## Python Libraries for UC Berkeley's ENE,RES 100 class
-
 Install
 ```bash
-git clone https://github.com/Serrindipity/ENERES-100-HW-Libraries.git
-cd eneres_100_hw_libraries
-python3 -m venv .venv # Make a virtual environment
+# These steps are optional. 
+python3 -m venv .venv # I recommend making a new virtual environment to put this library in, though.
 source .venv/bin/activate # Activate the venv
-pip3 install eneres_100_unum@git+https://github.com/Serrindipity/ENERES-100-Unum.git@main # Install custom unum library
+
+pip3 install eneres_100_hw_library@git+https://github.com/Serrindipity/ENERES-100-HW-Libraries.git@main # Install this library!
 ```
 
 Example Usage:
 ```python
-# Assuming this is run from the main project directory (i.e. where the README is)
-from src.eneres_100_hw_libraries.convert import convert
+from eneres_100_hw_libraries.convert import convert
 from unum.units import *
 
 efficiency = convert("0.3")
@@ -32,5 +30,5 @@ wood_per_year_eff_adjusted = wood_per_year * efficiency
 print(wood_per_year_eff_adjusted.asUnit(ton/year))
 ```
 TODO:
-- manage dependencies for upload to PyPi
-- pass tests for twine upload
+- [ ] manage dependencies for upload to PyPi
+- [ ] pass tests for twine upload

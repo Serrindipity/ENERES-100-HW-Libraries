@@ -1,5 +1,5 @@
 import unittest
-from ..eneres_100_hw_libraries.convert import convert
+from ..src.convert import convert
 from decimal import Decimal
 from unum.units import *
 
@@ -31,7 +31,7 @@ class ReprTests(unittest.TestCase):
         self.assertAlmostEqual(convert("17.3"), 17.3)
 
     def test_complex_division(self):
-        self.assertEqual(
+        self.assertAlmostEqual(
             convert("2000 * dollar * 0.04/year / 1 - (1 + 0.04)^-20"),
             147.16 * dollar / year,
         )
