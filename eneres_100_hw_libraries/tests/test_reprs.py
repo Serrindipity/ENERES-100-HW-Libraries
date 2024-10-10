@@ -1,5 +1,7 @@
+# python3 -m eneres_100_hw_libraries.tests.test_reprs
+
 import unittest
-from ..src.convert import convert
+from ..convert import convert
 from decimal import Decimal
 from unum.units import *
 

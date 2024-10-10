@@ -1,4 +1,4 @@
-from ..src.convert import convert
+from ..convert import convert
 from unum.units import *
 
 # print(convert("6.3 billion") * kg)
