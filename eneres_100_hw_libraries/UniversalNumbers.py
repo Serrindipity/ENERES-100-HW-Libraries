@@ -49,7 +49,10 @@ def _parse_input_type(input: float | int | str | Decimal | Unum) -> Unum:
         "x": "*",
         "^": "**",
     }
-    operators = ["+", "-", "*", "**", "/"]
+    operators = {"+", "-", "*", "**", "/"}
+    opening_separators = {"(", "[", "{"}
+    closing_separators = {")", "]", "}"}
+    separators = opening_separators | closing_separators
 
     in_str = input.strip()
     tokens = tokenize(in_str, None)
@@ -74,8 +77,22 @@ def _parse_input_type(input: float | int | str | Decimal | Unum) -> Unum:
     # Add INSERT_OPERATOR between all tokens without operators between them
     for prev, current in zip(converted_tokens, converted_tokens[1:]):
         final_tokens.append(prev)
-        if prev not in operators and current not in operators:
+
+        """
+        When do we want to insert an operator?
+        # 1. Between 2 values
+        # 2. Between a closing separator and an opening one without an operator already
+        """
+        if (
+            prev not in operators
+            and current not in operators
+            and prev not in separators
+            and current not in separators
+        ):
             final_tokens.append(UniversalNumber.INSERT_OPERATOR)
+        elif prev in closing_separators and current in opening_separators:
+            final_tokens.append(UniversalNumber.INSERT_OPERATOR)
+
     final_tokens.append(converted_tokens[-1])
 
     # Add parentheses after /
@@ -171,7 +188,7 @@ class UniversalNumber:
 
 def tokenize(expr: str, pattern: re.Pattern | None) -> list:
     token_pattern = (
-        r"(\d+(?:\.\d+)?(?:e[+\-]?\d+)?|[a-zA-Z]+|\*\*|[+\-*/()^])"
+        r"(-?\d+(?:\.\d+)?(?:e[+\-]?\d+)?|[a-zA-Z]+|\*\*|[+\-*/()^])"
         if not pattern
         else pattern
     )

@@ -1,5 +1,5 @@
 import unittest
-from eneres_100_hw_libraries.convert import convert
+from ..eneres_100_hw_libraries.convert import convert
 from decimal import Decimal
 from unum.units import *
 
@@ -25,6 +25,15 @@ class ReprTests(unittest.TestCase):
         self.assertEqual(
             convert("35 MJ / thousand m^3 / 72^2 kg"),
             (35 / (1000 * 72**2)) * MJ / (m**3 * kg),
+        )
+
+    def test_round(self):
+        self.assertAlmostEqual(convert("17.3"), 17.3)
+
+    def test_complex_division(self):
+        self.assertEqual(
+            convert("2000 * dollar * 0.04/year / 1 - (1 + 0.04)^-20"),
+            147.16 * dollar / year,
         )
 
 
