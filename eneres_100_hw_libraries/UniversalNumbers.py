@@ -70,12 +70,32 @@ def _parse_input_type(input: float | int | str | Decimal | Unum) -> Unum:
     if verbose:
         print(f"converted tokens = {converted_tokens}")
     final_tokens = []
+
     # Add INSERT_OPERATOR between all tokens without operators between them
     for prev, current in zip(converted_tokens, converted_tokens[1:]):
         final_tokens.append(prev)
         if prev not in operators and current not in operators:
             final_tokens.append(UniversalNumber.INSERT_OPERATOR)
     final_tokens.append(converted_tokens[-1])
+
+    # Add parentheses after /
+    i = 0
+    while i < len(final_tokens):
+        if final_tokens[i] == "/":
+            final_tokens.insert(i + 1, "(")
+            j = i + 2
+            search = True
+            while search:
+                j += 1
+                if j == len(final_tokens):
+                    final_tokens.append(")")
+                    search = False
+                    i = j
+                elif final_tokens[j] == "/":
+                    final_tokens.insert(j, ")")
+                    search = False
+                    i = j  # i will automatically increment
+        i += 1
 
     input = "".join(repr(i) if not isinstance(i, str) else i for i in final_tokens)
     if verbose:
@@ -110,7 +130,7 @@ class UniversalNumber:
     INSERT_OPERATOR = "*"
 
     def __init__(self, input) -> None:
-        self.dec = convert(input)
+        self.dec = _parse_input_type(input)
         self.reprs = self.generate_reprs()
 
     # Operations
@@ -150,10 +170,10 @@ class UniversalNumber:
 
 
 def tokenize(expr: str, pattern: re.Pattern | None) -> list:
-
     token_pattern = (
-        r"(\d+\.\d+|\d+|[a-zA-Z]+|\*\*|[+\-*/()^])" if not pattern else pattern
+        r"(\d+(?:\.\d+)?(?:e[+\-]?\d+)?|[a-zA-Z]+|\*\*|[+\-*/()^])"
+        if not pattern
+        else pattern
     )
-
     tokens = re.findall(token_pattern, expr, re.VERBOSE)
     return tokens

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name="eneres_100_hw_libraries"
-version="0.1.2"
+version="0.1.3"
 description="Python library with tools for UC Berkeley's ENE,RES 100"
 authors = [
     {name = "Serrindipity", email = "jon_quitoriano@berkeley.edu"},

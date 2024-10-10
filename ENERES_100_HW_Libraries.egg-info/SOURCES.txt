@@ -13,3 +13,5 @@ eneres_100_hw_libraries.egg-info/SOURCES.txt
 eneres_100_hw_libraries.egg-info/dependency_links.txt
 eneres_100_hw_libraries.egg-info/requires.txt
 eneres_100_hw_libraries.egg-info/top_level.txt
+tests/test_real.py
+tests/test_reprs.py
