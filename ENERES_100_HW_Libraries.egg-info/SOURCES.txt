@@ -5,15 +5,14 @@ ENERES_100_HW_Libraries.egg-info/SOURCES.txt
 ENERES_100_HW_Libraries.egg-info/dependency_links.txt
 ENERES_100_HW_Libraries.egg-info/requires.txt
 ENERES_100_HW_Libraries.egg-info/top_level.txt
+eneres_100_hw_libraries/UniversalNumbers.py
 eneres_100_hw_libraries/__init__.py
+eneres_100_hw_libraries/convert.py
 eneres_100_hw_libraries.egg-info/PKG-INFO
 eneres_100_hw_libraries.egg-info/SOURCES.txt
 eneres_100_hw_libraries.egg-info/dependency_links.txt
 eneres_100_hw_libraries.egg-info/requires.txt
 eneres_100_hw_libraries.egg-info/top_level.txt
-eneres_100_hw_libraries/src/UniversalNumbers.py
-eneres_100_hw_libraries/src/__init__.py
-eneres_100_hw_libraries/src/convert.py
 eneres_100_hw_libraries/tests/__init__.py
 eneres_100_hw_libraries/tests/test_real.py
 eneres_100_hw_libraries/tests/test_reprs.py

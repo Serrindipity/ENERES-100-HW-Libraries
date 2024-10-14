@@ -12,6 +12,15 @@ verbose = False
 """
 Returns a Unum object from a variety of number representations. Parses data, then tokenizes, then runs eval() on tokens
 """
+allowed_globals = {"__builtins__": None}
+allowed_locals = {
+    "Decimal": Decimal,
+    "e": Decimal("2.718281828459045"),
+    "pi": Decimal("3.141592653589793"),
+    "math": __import__("math"),  # Import math for math constants if necessary
+}
+# Add units as allowed_locals
+allowed_locals.update({k: v for k, v in vars(u).items() if not k.startswith("_")})
 
 
 def _parse_input_type(input: float | int | str | Decimal | Unum) -> Unum:
@@ -119,15 +128,15 @@ def _parse_input_type(input: float | int | str | Decimal | Unum) -> Unum:
         print(f"Post conversion output is {input}")
 
     # Allow only safe operations and scientific notation and Unum units
-    allowed_globals = {"__builtins__": None}
-    allowed_locals = {
-        "Decimal": Decimal,
-        "e": Decimal("2.718281828459045"),
-        "pi": Decimal("3.141592653589793"),
-        "math": __import__("math"),  # Import math for math constants if necessary
-    }
+    # allowed_globals = {"__builtins__": None}
+    # allowed_locals = {
+    #     "Decimal": Decimal,
+    #     "e": Decimal("2.718281828459045"),
+    #     "pi": Decimal("3.141592653589793"),
+    #     "math": __import__("math"),  # Import math for math constants if necessary
+    # }
     # Add units as allowed_locals
-    allowed_locals.update({k: v for k, v in vars(u).items() if not k.startswith("_")})
+    # allowed_locals.update({k: v for k, v in vars(u).items() if not k.startswith("_")})
     try:
 
         # Evaluate the input safely
