@@ -1,3 +1,9 @@
+# Testing first
+cd "~/Projects/ENERES-100-HW-Libraries"
+if !("~/.virtualenvs/.math-venv/bin/python3" -m eneres_100_hw_libraries.tests.test_reprs).returncode:
+    print("Test Failed.")
+    exit
+
 cd "~/Projects/eneres_100_unum"
 
 "~/.virtualenvs/.venv-build/bin/python3" -m build

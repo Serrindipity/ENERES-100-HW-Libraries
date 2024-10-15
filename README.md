@@ -21,6 +21,17 @@ wood_per_year = global_consumption / wood_energy
 wood_per_year_eff_adjusted = wood_per_year * efficiency
 print(wood_per_year_eff_adjusted.asUnit(ton/year))
 ```
+
+You can also use the `unit()` function to define your own units:
+```python
+from unim.units import *
+mpge = MPGe = unit(
+        "mpge", mile / (3.37e1 * kWh), "miles per gallon of gasoline-equivalent"
+    )
+electricity_cost_per_year = (
+        (0.14 * dollar / kWh) / (100 * mpge) * (12000 * mile / year)
+    )
+```
 TODO:
 - [ ] manage dependencies for upload to PyPi
 - [ ] pass tests for twine upload
