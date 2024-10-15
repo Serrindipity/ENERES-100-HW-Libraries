@@ -16,7 +16,7 @@ git commit -m msg
 git push
 sleep .5
 
-"~/.virtualenvs/.math-venv/bin/python3" -m pip3 uninstall -y eneres_100_unum eneres_100_hw_libraries
+"~/.virtualenvs/.math-venv/bin/python3" -m pip uninstall -y eneres_100_unum eneres_100_hw_libraries
 sleep 1
-"~/.virtualenvs/.math-venv/bin/python3" -m pip3 install "eneres_100_hw_library@git+https://github.com/Serrindipity/ENERES-100-HW-Libraries.git@main"
+"~/.virtualenvs/.math-venv/bin/python3" -m pip install "eneres_100_hw_libraries@git+https://github.com/Serrindipity/ENERES-100-HW-Libraries.git@main"
 
