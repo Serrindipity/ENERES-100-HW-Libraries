@@ -1,5 +1,5 @@
-build_venv = "~/.virtualenvs/.venv-build/bin/python3"
-library_venv = "~/.virtualenvs/.math-venv/bin/python3"
+build_venv = p"~/.virtualenvs/.venv-build/bin/python3"
+library_venv = p"~/.virtualenvs/.math-venv/bin/python3"
 
 # Testing first
 cd "~/Projects/ENERES-100-HW-Libraries"

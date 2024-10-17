@@ -8,6 +8,8 @@ source .venv/bin/activate # Activate the venv
 pip3 install eneres_100_hw_library@git+https://github.com/Serrindipity/ENERES-100-HW-Libraries.git@main # Install this library!
 ```
 
+If for some reason you use [xonsh](https://xon.sh/) (why would you do that to yourself?), you can take also look at the [build script](/build.xsh).
+
 Example Usage:
 ```python
 from eneres_100_hw_libraries.convert import convert
