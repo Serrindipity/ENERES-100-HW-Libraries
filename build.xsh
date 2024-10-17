@@ -4,8 +4,8 @@ library_venv = p"~/.virtualenvs/.math-venv/bin/python3"
 # Testing first
 cd "~/Projects/ENERES-100-HW-Libraries"
 test = !(@(library_venv) -m eneres_100_hw_libraries.tests.test_reprs)
-if @(test.returncode):
-    print(@(test.errors))
+if test.returncode:
+    print(test.errors)
     print("Test Failed. Aborting build.")
     exit
 
