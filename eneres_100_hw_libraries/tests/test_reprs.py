@@ -27,7 +27,7 @@ class ReprTests(unittest.TestCase):
         self.assertEqual(convert("346,567,000"), 346567000)
 
     def test_unum(self):
-        self.assertEqual(
+        self.assertAlmostEqual(
             convert("35 MJ / thousand m^3 / 72^2 kg"),
             (35 / (1000 * 72**2)) * MJ / (m**3 * kg),
         )

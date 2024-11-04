@@ -6,200 +6,177 @@ from decimal import Decimal, InvalidOperation, getcontext
 from unum import Unum
 import unum.units as u
 import re
+import warnings
+from typing import Iterable
+from eneres_100_hw_libraries.convert import convert, tokenize
 
 
-verbose = False
-"""
-Returns a Unum object from a variety of number representations. Parses data, then tokenizes, then runs eval() on tokens
-"""
-allowed_globals = {"__builtins__": None}
-allowed_locals = {
-    "Decimal": Decimal,
-    "e": Decimal("2.718281828459045"),
-    "pi": Decimal("3.141592653589793"),
-    "math": __import__("math"),  # Import math for math constants if necessary
-}
-# Add units as allowed_locals
-allowed_locals.update({k: v for k, v in vars(u).items() if not k.startswith("_")})
-
-
-def _parse_input_type(input: float | int | str | Decimal | Unum) -> Unum:
-    getcontext().prec = 7
-
-    if isinstance(input, (float, int)):
-        return Unum.coerceToUnum(Decimal(input))
-
-    if isinstance(input, (Decimal, Unum)):
-        return Unum.coerceToUnum(input)
-
-    # Parse comma-separated stuff
-    if isinstance(input, str) and "," in input:
-        input = input.replace(",", "")
-
-    # Handle percents
-    if isinstance(input, str) and input.endswith("%"):
-        try:
-            dec = Decimal(input[:-1]) / 100
-        except InvalidOperation:
-            raise ValueError(f"Invalid percentage format: {input}")
-        return Unum.coerceToUnum(dec)
-    # Do conversions:
-
-    conversions = {
-        "hundred": Decimal(10**2),
-        "thousand": Decimal(10**3),
-        "million": Decimal(10**6),
-        "billion": Decimal(10**9),
-        "trillion": Decimal(10**12),
-        "quadrillion": Decimal(10**15),
-        "quintillion": Decimal(10**18),
-        "sextillion": Decimal(10**21),
-        "per": "/",
-        "x": "*",
-        "^": "**",
-    }
-    operators = {"+", "-", "*", "**", "/"}
-    opening_separators = {"(", "[", "{"}
-    closing_separators = {")", "]", "}"}
-    separators = opening_separators | closing_separators
-
-    in_str = input.strip()
-    tokens = tokenize(in_str, None)
-    if verbose:
-        print(tokens)
-    converted_tokens = []
-    for i in tokens:
-        if i in conversions.keys():
-            converted_tokens.append(conversions[i])
-        else:
-            try:
-                if verbose:
-                    print(i)
-                converted_tokens.append(Decimal(i))
-            except (InvalidOperation, TypeError):
-                converted_tokens.append(i)
-                # print("Decimal coercion failed")
-    if verbose:
-        print(f"converted tokens = {converted_tokens}")
-    final_tokens = []
-
-    # Add INSERT_OPERATOR between all tokens without operators between them
-    for prev, current in zip(converted_tokens, converted_tokens[1:]):
-        final_tokens.append(prev)
-
-        """
-        When do we want to insert an operator?
-        # 1. Between 2 values
-        # 2. Between a closing separator and an opening one without an operator already
-        """
-        if (
-            prev not in operators
-            and current not in operators
-            and prev not in separators
-            and current not in separators
-        ):
-            final_tokens.append(UniversalNumber.INSERT_OPERATOR)
-        elif prev in closing_separators and current in opening_separators:
-            final_tokens.append(UniversalNumber.INSERT_OPERATOR)
-
-    final_tokens.append(converted_tokens[-1])
-
-    # Add parentheses after /
-    i = 0
-    while i < len(final_tokens):
-        if final_tokens[i] == "/":
-            final_tokens.insert(i + 1, "(")
-            j = i + 2
-            search = True
-            while search:
-                j += 1
-                if j == len(final_tokens):
-                    final_tokens.append(")")
-                    search = False
-                    i = j
-                elif final_tokens[j] == "/":
-                    final_tokens.insert(j, ")")
-                    search = False
-                    i = j  # i will automatically increment
-        i += 1
-
-    input = "".join(repr(i) if not isinstance(i, str) else i for i in final_tokens)
-    if verbose:
-        print(f"Post conversion output is {input}")
-
-    # Allow only safe operations and scientific notation and Unum units
-    # allowed_globals = {"__builtins__": None}
-    # allowed_locals = {
-    #     "Decimal": Decimal,
-    #     "e": Decimal("2.718281828459045"),
-    #     "pi": Decimal("3.141592653589793"),
-    #     "math": __import__("math"),  # Import math for math constants if necessary
-    # }
-    # Add units as allowed_locals
-    # allowed_locals.update({k: v for k, v in vars(u).items() if not k.startswith("_")})
+# TODO: Look at splitting parse input type functionality into multiple functions to reuse for this method
+def find_sigfigs(rep: float | int | str | Decimal | Unum) -> int:
+    """Returns the number of significant figures for the given input."""
     try:
+        return _sigfig(rep)
+    except:
+        tokens = tokenize(rep)
+        if len(tokens) == 1:
+            return _sigfig(tokens[0])
+        else:
+            raise NotImplementedError
 
-        # Evaluate the input safely
-        evaluated_input = eval(input, allowed_globals, allowed_locals)
 
-        # Convert the result to Decimal
-        return (
-            evaluated_input
-            if isinstance(evaluated_input, Unum)
-            else Unum.coerceToUnum(Decimal(evaluated_input))
+def _sigfig(rep: float | int | str | Decimal | Unum) -> int:
+    """
+    Returns the number of significant figures for a singular input. May be `Decimal('Infinity')` if the figure is exact. Should *only* be called on input for a single token. Maybe return 0 if token should be ignored?
+    >>> _sigfig(123000)
+    3
+    >>> _sigfig(Decimal('1600.026'))
+    7
+    """
+
+    FLOAT_ZEROS_THRESHOLD = 5
+
+    inf = {
+        "hundred",
+        "thousand",
+        "million",
+        "billion",
+        "trillion",
+        "quadrillion",
+        "quintillion",
+        "sextillion",
+    }
+    if isinstance(rep, int):
+        # This is a bit hacky, but it works? Might want to look for a more elegant way to do this.
+        return len(str(rep).rstrip("0"))
+
+    if isinstance(rep, Decimal):
+        str_repr = str(rep)
+        parts = str_repr.split(".")
+        if len(parts) == 1:
+            return _sigfig(
+                int(parts[0])
+            )  # Turns it into an int and runs it back into _sigfig
+        else:
+            assert len(parts) == 2
+            figs = 0
+            # Currently adds the length of the first part, then the length of the second part minus the decimal point. This could *definitely* be simplified.
+            figs += len(parts[0]) if int(parts[0]) != 0 else 0
+            figs += len(parts[1].removeprefix("."))
+            return figs
+
+    if isinstance(rep, Unum):
+        return _sigfig(rep.asNumber())
+
+    if isinstance(rep, float):
+        warnings.warn(
+            "Float passed to sigfig check... Did you mean to pass in a Decimal?",
+            SyntaxWarning,
         )
-    except (TypeError, InvalidOperation):
-        raise ValueError(f"Invalid number format: {input}")
+        # Just coerces it back to a decimal and passes it back to the function lol
+        return _sigfig(Decimal(rep))
+    if isinstance(rep, str) and rep in inf:
+        return Decimal("Infinity")
+    try:
+        return _sigfig(Decimal(rep))
+    except:
+        raise InvalidOperation("Sigfigs could not be extracted from token")
 
 
+# TODO: Refactor this so that all internal methods get overriden by the unum inside it
+# TODO: Make all reprs print the unum
 class UniversalNumber:
-    INSERT_OPERATOR = "*"
 
-    def __init__(self, input) -> None:
-        self.dec = _parse_input_type(input)
-        self.reprs = self.generate_reprs()
+    REPR_TYPES = {"COMMA", "SCI", "DEFAULT", "DECIMAL"}
+
+    def __init__(self, unum, sfs) -> None:
+        self.unum: Unum = unum
+        self.sigfigs: int = sfs
+        self.reprs: dict = self.generate_reprs()
+
+        # Grabs all the methods of Unum and set them as attributes of UniversalNumber. This is **so bad** and I should prob just use inheritance instead.
+        # ignore = {"__init__", "__class__"}
+        # method_list = [
+        #     func
+        #     for func in dir(Unum)
+        #     if (callable(getattr(Unum, func)) and func not in ignore)
+        # ]
+        # for f in method_list:
+        #     func = getattr(Unum, f)
+        #     overloaded_f = lambda self, *otherargs: self.unum.func(*otherargs)
+        #     setattr(self, f, overloaded_f)
+
+    def coerce(rep, sigfigs: int = None):
+        """Returns a UniversalNumber with sigfigs and unum from the given input. Attempts to calculate the number of sigfigs if not passed in."""
+        if isinstance(rep, UniversalNumber):
+            return rep
+        unum: Unum = convert(rep)
+        sf: int = sigfigs if sigfigs else find_sigfigs(rep)
+        return UniversalNumber(unum, sf)
+
+    coerce = staticmethod(coerce)
+
+    __slots__ = ("unum", "sigfigs", "reprs", "__dict__")
 
     # Operations
+    # TODO: Add and sub should work based on decimal places, not sigfigs
     def __add__(self, other):
-        if isinstance(other, UniversalNumber):
-            return UniversalNumber(self.dec + other.dec)
-        return UniversalNumber(self.dec + Decimal(other))
+        pass
 
     def __sub__(self, other):
-        if isinstance(other, UniversalNumber):
-            return UniversalNumber(self.dec - other.dec)
-        return UniversalNumber(self.dec - Decimal(other))
+        pass
 
     def __mul__(self, other):
-        if isinstance(other, UniversalNumber):
-            return UniversalNumber(self.dec * other.dec)
-        return UniversalNumber(self.dec * Decimal(other))
+        o = UniversalNumber.coerce(other)
+        return UniversalNumber(
+            self.unum * other, min(self.get_sigfigs(), o.get_sigfigs())
+        )
 
     def __truediv__(self, other):
-        if isinstance(other, UniversalNumber):
-            return UniversalNumber(self.dec / other.dec)
-        return UniversalNumber(self.dec / Decimal(other))
+        o = UniversalNumber.coerce(other)
+        return UniversalNumber(
+            self.unum / other, min(self.get_sigfigs(), o.get_sigfigs())
+        )
 
+    def __eq__(self, other: object) -> bool:
+        return round(self) == round(other)
+
+    # Others
     def __str__(self):
-        if not self.dec // 1000000:
-            return self.reprs["comma"]
+        if not self.unum // 1000000:
+            return self.reprs["COMMA"]
         else:
-            return self.reprs["sci"]
+            return self.reprs["DEFAULT"]
 
     def __repr__(self):
-        return f"UniversalNumber({self.reprs['dec']})"
+        return f"UniversalNumber({self.reprs['DEFAULT']})"
 
+    def __round__(self):
+        return UniversalNumber(round(self.unum, self.sigfigs), self.sigfigs)
+
+    def get_sigfigs(self) -> int:
+        return self.sigfigs
+
+    # TODO change this to represent sigfigs also?
     def generate_reprs(self) -> dict:
-        comma_repr = f"{self.dec:,}"
-        sci_repr = "%e" % self.dec
-        return {"dec": self.dec, "comma": comma_repr, "sci": sci_repr}
+        """Returns a `dict` of number representations. Should return **COMMA**, **SCI**, and **DEFAULT** reprs at least."""
+        reprs = {"DEFAULT": str(self.unum)}
+        unit_str = self.unum.strUnit()
+        if unit_str:
+            unit_str = Unum.UNIT_INDENT + unit_str
+
+        decimal_repr = (str(Decimal(self.unum.asNumber())) + unit_str).strip()
+        reprs["DECIMAL"] = decimal_repr
+
+        comma_repr = f"{self.unum.asNumber():,}{unit_str}"
+        reprs["COMMA"] = comma_repr
+
+        return reprs
+
+    def get_reprs(self) -> dict:
+        return self.reprs
 
 
-def tokenize(expr: str, pattern: re.Pattern | None) -> list:
-    token_pattern = (
-        r"(-?\d+(?:\.\d+)?(?:e[+\-]?\d+)?|[a-zA-Z]+|\*\*|[+\-*/()^])"
-        if not pattern
-        else pattern
-    )
-    tokens = re.findall(token_pattern, expr, re.VERBOSE)
-    return tokens
+if __name__ == "__main__":
+    import doctest
+
+    doctest.testmod()

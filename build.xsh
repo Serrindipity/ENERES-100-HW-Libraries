@@ -17,7 +17,6 @@ git add .
 msg = input("Please enter a commit message for eneres_100_unum: \n")
 git commit -m @(msg)
 git push
-sleep .5
 
 cd "~/Projects/ENERES-100-HW-Libraries"
 @(build_venv) -m build
@@ -25,9 +24,7 @@ git add .
 msg = input("Please enter a commit message for ENERES-100-HW-Libraries: \n")
 git commit -m @(msg)
 git push
-sleep .5
 
 @(library_venv) -m pip uninstall -y eneres_100_unum eneres_100_hw_libraries
-sleep 1
 @(library_venv) -m pip install "eneres_100_hw_libraries@git+https://github.com/Serrindipity/ENERES-100-HW-Libraries.git@main"
 
