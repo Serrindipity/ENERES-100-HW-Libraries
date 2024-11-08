@@ -14,6 +14,7 @@ eneres_100_hw_libraries.egg-info/dependency_links.txt
 eneres_100_hw_libraries.egg-info/requires.txt
 eneres_100_hw_libraries.egg-info/top_level.txt
 eneres_100_hw_libraries/tests/__init__.py
+eneres_100_hw_libraries/tests/test_UniversalNumber.py
 eneres_100_hw_libraries/tests/test_real.py
 eneres_100_hw_libraries/tests/test_reprs.py
 eneres_100_hw_libraries/tests/test_sigfigs.py

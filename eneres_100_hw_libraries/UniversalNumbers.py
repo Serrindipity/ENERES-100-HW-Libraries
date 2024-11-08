@@ -4,8 +4,6 @@
 
 from decimal import Decimal, InvalidOperation, getcontext
 from unum import Unum
-import unum.units as u
-import re
 import warnings
 from typing import Iterable
 from eneres_100_hw_libraries.convert import convert, tokenize
@@ -45,24 +43,14 @@ def _sigfig(rep: float | int | str | Decimal | Unum) -> int:
         "quintillion",
         "sextillion",
     }
+    print(rep)
     if isinstance(rep, int):
         # This is a bit hacky, but it works? Might want to look for a more elegant way to do this.
         return len(str(rep).rstrip("0"))
 
     if isinstance(rep, Decimal):
         str_repr = str(rep)
-        parts = str_repr.split(".")
-        if len(parts) == 1:
-            return _sigfig(
-                int(parts[0])
-            )  # Turns it into an int and runs it back into _sigfig
-        else:
-            assert len(parts) == 2
-            figs = 0
-            # Currently adds the length of the first part, then the length of the second part minus the decimal point. This could *definitely* be simplified.
-            figs += len(parts[0]) if int(parts[0]) != 0 else 0
-            figs += len(parts[1].removeprefix("."))
-            return figs
+        return _sigs_from_str(str_repr)
 
     if isinstance(rep, Unum):
         return _sigfig(rep.asNumber())
@@ -77,9 +65,27 @@ def _sigfig(rep: float | int | str | Decimal | Unum) -> int:
     if isinstance(rep, str) and rep in inf:
         return Decimal("Infinity")
     try:
-        return _sigfig(Decimal(rep))
+        return _sigs_from_str(rep)
     except:
         raise InvalidOperation("Sigfigs could not be extracted from token")
+
+
+def _sigs_from_str(rep: str) -> int:
+    assert isinstance(rep, str)
+    parts = rep.split(".")
+    if len(parts) == 1:
+        return _sigfig(
+            int(parts[0])
+        )  # Turns it into an int and runs it back into _sigfig
+    else:
+        assert len(parts) == 2
+        figs = 0
+        # Currently adds the length of the first part, then the length of the second part minus the decimal point.
+        figs += (
+            len(parts[0]) if int(parts[0]) != 0 else 0
+        )  # This only adds the length of the first part if it's not 0
+        figs += len(parts[1])
+        return figs
 
 
 # TODO: Refactor this so that all internal methods get overriden by the unum inside it
@@ -120,10 +126,20 @@ class UniversalNumber:
     # Operations
     # TODO: Add and sub should work based on decimal places, not sigfigs
     def __add__(self, other):
-        pass
+        o = UniversalNumber.coerce(other)
+        fewest = min(self.get_sigfigs(), o.get_sigfigs())
+        u = self.unum + o.unum
+        num = round(u.asNumber(), fewest)
+        nunum = Unum(u.getUnitTable(), num)
+        return UniversalNumber.coerce(nunum)
 
     def __sub__(self, other):
-        pass
+        o = UniversalNumber.coerce(other)
+        fewest = min(self.get_sigfigs(), o.get_sigfigs())
+        u = self.unum - o.unum
+        num = round(u.asNumber(), fewest)
+        nunum = Unum(u.getUnitTable(), num)
+        return UniversalNumber.coerce(nunum)
 
     def __mul__(self, other):
         o = UniversalNumber.coerce(other)
